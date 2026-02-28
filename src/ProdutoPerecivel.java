@@ -35,4 +35,11 @@ public class ProdutoPerecivel extends Produto{
         dados += "\nVálido até " +formato.format(dataDeValidade);
         return dados;
     }
+
+    @Override
+    public String gerarDadosTexto() {
+        String precoFormatado = String.format("%.2f", precoCusto).replace(",", ".");
+        String margemFormatado = String.format("%.2f", margemLucro).replace(",", ".");
+        return String.format("2;%s;%s;%s", descricao, precoFormatado, margemFormatado);
+    }
 }
