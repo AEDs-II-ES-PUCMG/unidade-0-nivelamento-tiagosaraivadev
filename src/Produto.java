@@ -1,11 +1,13 @@
 import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
-public class Produto {
+abstract class Produto {
 	
 	private static final double MARGEM_PADRAO = 0.2;
-	private String descricao;
-	private double precoCusto;
-	private double margemLucro;
+	protected String descricao;
+	protected double precoCusto;
+	protected double margemLucro;
 	
 	/**
      * Inicializador privado. Os valores default, em caso de erro, são:
@@ -67,4 +69,31 @@ public class Produto {
     	
 		return String.format("NOME: " + descricao + ": " + moeda.format(valorDeVenda()));
 	}
-}
+
+	@Override
+	public boolean equals(Object obj){
+		Produto outro = (Produto)obj;
+		return this.descricao.toLowerCase().equals(outro.descricao.toLowerCase());
+	}
+
+
+	public static Produto criarDoTexto(String linha) {
+		Produto novoProduto = null;
+		DateTimeFormatter formatoData = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		String[] atributos = linha.split(";");
+		int tipo = Integer.parseInt(atributos[0]);
+		String descricao = atributos[1];
+		Double preco = Double.parseDouble(atributos[2]);
+		Double margem = Double.parseDouble(atributos[3]);
+		if(tipo == 1) {
+			novoProduto = new ProdutoNaoPerecivel(descricao, preco, margem);
+		}
+		else {
+			LocalDate data = LocalDate.parse(atributos[4], formatoData);
+			novoProduto = new ProdutoPerecivel(descricao, preco, margem, data);
+		}
+		return novoProduto;
+	}
+};
+
+
